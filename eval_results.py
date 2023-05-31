@@ -2,8 +2,7 @@ from src.db_connection import get_all_completed_experiment
 from src.experiment import ExperimentDB
 import numpy as np 
 from scipy.stats import fisher_exact, ttest_ind
-import matplotlib.pyplot as plt
-import seaborn as sns
+
 
 def extract_score(exp):
     pred_tuple = exp.list_human_pred_test
@@ -33,32 +32,49 @@ experiments_db = get_all_completed_experiment()
 for exp_db in experiments_db:
     exp = ExperimentDB(exp_db)
     al_type = exp.al_type
-    if al_type == 0:
-        scores, avg_score =extract_score(exp)
-        if scores is not None:
-            random_scores.append(scores)
-    elif al_type == 1 or al_type == 2:
+    if al_type == 1:
         scores, avg_score =extract_score(exp)
         if scores is not None:
             al_scores.append(scores)
-    
- 
-
-# extracting data from that awful design of mine
-exp.list_human_pred_test
-exp.X
-
+    elif al_type == 0:
+        scores, avg_score =extract_score(exp)
+        if scores is not None:
+            random_scores.append(scores)
+    elif al_type == 2:
+        scores, avg_score =extract_score(exp)
+        if scores is not None:
+            al_next.append(scores)
+            
 means_al = [np.mean(i) for i in al_scores]
 means_rd = [np.mean(i) for i in random_scores]
-all_data = [means_al,means_rd]
+means_al2 = [np.mean(i) for i in al_next]
 
+import matplotlib.pyplot as plt
+
+fig1, ax1 = plt.subplots()
+
+all_data = [means_al2, means_al,means_rd]
+
+ax1.boxplot(all_data)
+
+
+ax1.yaxis.grid(True)
+ax1.set_xticks([y + 1 for y in range(len(all_data))])
+
+ax1.set_ylabel('Accuracy')
+
+# add x-tick labels
+plt.setp(ax1, xticks=[y + 1 for y in range(len(all_data))],
+         xticklabels=['human modeling + active learning', 'with active learning', 'random baseline'])
+plt.savefig('good_start.pdf')
 
 
 print('AL Experiment Result...')
 
 print("Total trials", len(means_al)+len(means_rd))
-print('Mean accuracy with al :',np.mean(means_al), 'over', len(means_al))
-print('Mean accuracy with random :',np.mean(means_rd), 'over',len(means_rd))
+print('Mean accuracy with al :',np.mean(means_al))
+print('Mean accuracy with next al :',np.mean(means_al2))
+print('Mean accuracy with random :',np.mean(means_rd))
 
 
 stat, p_val = ttest_ind(means_al, means_rd, equal_var=False)
@@ -67,23 +83,3 @@ if p_val < 0.05:
     print('with significane')
 else:
     print('without significance')
-
-
-
-
-fig1, ax1 = plt.subplots()
-
-sns.boxenplot(data=all_data, ax=ax1, showfliers=False, scale="linear")
-#sns.violinplot(data=all_data,cut=0, ax=ax1)
-ax1.yaxis.grid(True)
-ax1.set_xticks([y  for y in range(len(all_data))])
-
-ax1.set_ylabel('Accuracy')
-
-# add x-tick labels
-# plt.setp(ax1, xticks=[y  for y in range(len(all_data))],
-#          xticklabels=['with active learning', 'random baseline'])
-plt.show()
-
-
-
