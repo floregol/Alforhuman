@@ -95,7 +95,7 @@ class Experiment:
 
 class ExperimentDB(Experiment):
     def __init__(self, dict1):
-        if dict1['dataset_type'] == 'mushroom':
+        if 'dataset_type' in dict1 and dict1['dataset_type'] == 'mushroom':
             # FOR NOW IT IS JUST STORED 
             X, y, images_path = get_mushroom_dataset()
             dict1['X'] = X

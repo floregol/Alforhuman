@@ -4,7 +4,7 @@ import numpy as np
 from scipy.stats import fisher_exact, ttest_ind
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+from datetime import datetime
 def extract_score(exp):
     pred_tuple = exp.list_human_pred_test
     num_test = len(pred_tuple)
@@ -37,15 +37,19 @@ experiments_db = get_all_completed_experiment()
 
 for exp_db in experiments_db:
     exp = ExperimentDB(exp_db)
-    al_type = exp.al_type
-    if al_type == 0:
-        scores, avg_score =extract_score(exp)
-        if scores is not None:
-            random_scores.append(scores)
-    elif al_type == 1 or al_type == 2:
-        scores, avg_score =extract_score(exp)
-        if scores is not None:
-            al_scores.append(scores)
+    print(datetime.fromtimestamp(exp.session_id))
+    if datetime.fromtimestamp(1670060232) > datetime.fromtimestamp(exp.session_id):
+        al_type = exp.al_type
+        if al_type == 0:
+            scores, avg_score =extract_score(exp)
+            if scores is not None:
+                random_scores.append(scores)
+        elif al_type == 1:
+            scores, avg_score =extract_score(exp)
+            if scores is not None:
+                al_scores.append(scores)
+    else:
+        print('to recent')
     
  
 
@@ -75,10 +79,11 @@ else:
 
 
 
-
+plt.boxplot(all_data, showmeans=True)
+plt.show()
 fig1, ax1 = plt.subplots()
 
-sns.boxenplot(data=all_data, ax=ax1, showfliers=False, scale="linear")
+#sns.boxenplot(data=all_data, ax=ax1, showfliers=False, scale="linear")
 #sns.violinplot(data=all_data,cut=0, ax=ax1)
 ax1.yaxis.grid(True)
 ax1.set_xticks([y  for y in range(len(all_data))])
