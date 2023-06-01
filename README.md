@@ -1,5 +1,6 @@
 # Alforhuman
 
+
 Run before anything :
 
 `$ python src/generateColor.py`
@@ -16,5 +17,4 @@ Web-based local version :
 `$ export FLASK_APP=server.py`
 
 `$ flask run `
-
 
