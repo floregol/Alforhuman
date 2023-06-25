@@ -88,8 +88,8 @@ def download_mushroom():
     for i in range(len(labels)):
         if(img_dict[i].shape == (480, 480, 3)):
             y.append(labels[i])
-            X.append(img_dict[i][8:-8, 8:-8,:])
-            print(img_dict[i][8:-8, 8:-8,:].shape)
+            X.append(img_dict[i][16:-16, 16:-16,:])
+            print(img_dict[i][16:-16, 16:-16,:].shape)
 
     X = np.stack(X)
     y = pd.Series(y)
