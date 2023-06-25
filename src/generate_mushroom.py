@@ -2,11 +2,7 @@
 import pickle as pk
 import math
 import os
-from tkinter import E
-import matplotlib.patches as patches
 import matplotlib.pyplot as plt
-from scipy import misc
-import pandas as pd
 import numpy as np
 import imageio.v2 as imageio
 
