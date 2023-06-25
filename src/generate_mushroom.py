@@ -49,10 +49,10 @@ def download_mushroom():
             i = i + 1
             print(img_dict[img].shape)
 
-    # Format the pictures to (480,480,3) by padding them with the edge values
+    # Format the pictures to (465,465,3) by padding them with the edge values
     for img in img_dict:
-        height = 480 - img_dict[img].shape[0]
-        width = 480 - img_dict[img].shape[1]
+        height = 465 - img_dict[img].shape[0]
+        width = 465 - img_dict[img].shape[1]
 
         if(height % 2 == 1 & width % 2 == 1):
             height1, height2 = math.floor(height/2), math.floor(height/2) + 1
@@ -86,7 +86,7 @@ def download_mushroom():
     y = []
 
     for i in range(len(labels)):
-        if(img_dict[i].shape == (480, 480, 3)):
+        if(img_dict[i].shape == (465, 465, 3)):
             y.append(labels[i])
             X.append(img_dict[i])
 
