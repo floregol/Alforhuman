@@ -1,4 +1,5 @@
 
+import bz2
 import pickle as pk
 import math
 import os
@@ -100,7 +101,7 @@ def chunks(lst, n):
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
 
-NUM_CHUNKS = 10
+NUM_CHUNKS = 1
 def storing_mushroom_dataset(data):
     X = data['X']
     y = data['y']
@@ -112,7 +113,7 @@ def storing_mushroom_dataset(data):
         chunk_data = {'X': smaller_X, 'y':smaller_y}
         file_path = os.path.join(
             MUSHROOM_DATAPATH, str(i)+'_' + MUSHROOM_FILENAME)
-        with open(file_path, 'wb') as f:
+        with bz2.BZ2File(file_path, 'wb') as f:
             pk.dump(chunk_data, f)
 
 
@@ -150,7 +151,7 @@ def get_mushroom_dataset():
         data_file_path = os.path.join(
             MUSHROOM_DATAPATH, str(i)+'_' + MUSHROOM_FILENAME)
         try:
-            with open(data_file_path, "rb") as f:
+            with bz2.BZ2File(data_file_path, "rb") as f:
                 chunk_dataset_data = pk.load(f)
             X_list.append(chunk_dataset_data['X'])
             y_list.append(chunk_dataset_data['y'])
