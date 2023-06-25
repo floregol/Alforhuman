@@ -1,7 +1,7 @@
 Flask==2.0.2
 imageio==2.29.0
 matplotlib==3.5.1
-modAL==0.4.1
+modAL
 numpy==1.21.2
 pandas==1.5.3
 pymongo==4.0.1
