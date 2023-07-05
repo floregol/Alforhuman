@@ -1,12 +1,11 @@
 
-import bz2
 import pickle as pk
 import math
 import os
 import matplotlib.pyplot as plt
 import numpy as np
 import imageio.v2 as imageio
-
+from scipy.ndimage.interpolation import zoom
 MUSHROOM_DATAPATH = 'static/mushroom'
 MUSHROOM_FILENAME = 'mushroom_data.pkl'
 
@@ -49,7 +48,7 @@ def download_mushroom():
             i = i + 1
             print(img_dict[img].shape)
 
-    # Format the pictures to (465,465,3) by padding them with the edge values
+    # Format the pictures to (240,240,3) by padding them with the edge values
     for img in img_dict:
         height = 480 - img_dict[img].shape[0]
         width = 480 - img_dict[img].shape[1]
@@ -68,15 +67,16 @@ def download_mushroom():
             width1, width2 = int(width/2), int(width/2)
 
         if(height == 0):
-            img_dict[img] = np.lib.pad(
+            image = np.lib.pad(
                 img_dict[img], ((0, 0), (width1, width2), (0, 0)), 'edge')
         elif (width == 0):
-            img_dict[img] = np.lib.pad(
+            image = np.lib.pad(
                 img_dict[img], ((height1, height2), (0, 0), (0, 0)), 'edge')
         else:
-            img_dict[img] = np.lib.pad(
+            image = np.lib.pad(
                 img_dict[img], ((height1, height2), (width1, width2), (0, 0)), 'edge')
-
+        sized_down = zoom(image, (0.5, 0.5, 1)) 
+        img_dict[img] = sized_down
     mushroom_info.edibility.value_counts()
 
     labels = mushroom_info.edibility.isin(
@@ -86,10 +86,10 @@ def download_mushroom():
     y = []
 
     for i in range(len(labels)):
-        if(img_dict[i].shape == (480, 480, 3)):
+        if(img_dict[i].shape == (240, 240, 3)):
             y.append(labels[i])
-            X.append(img_dict[i][16:-16, 16:-16,:])
-            print(img_dict[i][16:-16, 16:-16,:].shape)
+            X.append(img_dict[i][4:-4, 4:-4,:])
+            print(img_dict[i][4:-4, 4:-4,:].shape)
 
     X = np.stack(X)
     y = pd.Series(y)
@@ -114,7 +114,7 @@ def storing_mushroom_dataset(data):
         chunk_data = {'X': smaller_X, 'y':smaller_y}
         file_path = os.path.join(
             MUSHROOM_DATAPATH, str(i)+'_' + MUSHROOM_FILENAME)
-        with bz2.BZ2File(file_path, 'wb') as f:
+        with open(file_path, 'wb') as f:
             pk.dump(chunk_data, f)
 
 
@@ -152,7 +152,7 @@ def get_mushroom_dataset():
         data_file_path = os.path.join(
             MUSHROOM_DATAPATH, str(i)+'_' + MUSHROOM_FILENAME)
         try:
-            with bz2.BZ2File(data_file_path, "rb") as f:
+            with open(data_file_path, "rb") as f:
                 chunk_dataset_data = pk.load(f)
             X_list.append(chunk_dataset_data['X'])
             y_list.append(chunk_dataset_data['y'])
